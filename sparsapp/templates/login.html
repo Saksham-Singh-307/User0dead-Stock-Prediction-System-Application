@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">	
+	<link rel="stylesheet" type="text/css" href="{% static 'css/log.css' %}">
+	<style type="text/css">
+    body{
+      background-color: black;
+    }
+    .ocontainer{
+      height: 310px;
+      width: 340px;
+      color: darkred;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      border-radius: 15px;
+      background-color: black ;
+      font-family: sans-serif;
+      transform: translateX(5%) ;
+      border: 3px solid blue;
+    }
+    .ocontainer1{
+      transform: translateY(5%);
+    }
+    .oinput{
+      width: 25px;
+      height: 25px;
+      margin: 8px 3px;
+      font-size: 18px;
+      outline: none;
+      border: 1px solid white;
+      border-radius: 5px;
+      text-align: center;
+      color: darkred;
+      background: transparent;
+    }
+    
+
+    .obutton{
+      width: 80px;
+      font-weight: 600;
+      border-radius: 20px;
+      border: 2px solid blue;
+      color: blue;
+      padding: 5px;
+      cursor: pointer;
+      background: transparent;
+      transition: 0.4s ease-in;
+      margin-top: 10px;
+      &:hover{
+        background-color: blue;
+        color: black;
+      }
+    }
+
+  </style>
+
+</head>
+<body>
+	<div class="container-fluid position-relative d-flex p-0">
+
+
+	<div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center color-blue" >
+        </div>
+	
+	<!-- login -->
+	<div id="logpage">
+	<div class="container" id="login">
+		<div class="curved-shaped"></div>
+		<div class="curved-shaped2"></div>
+		<div class="form-box Login">
+			<h2 class="animation" style="--d:0">SPARS Login </h2>
+			<form action="/logged/" method="post">
+				<div class="input-box animation" style="--d:1" >
+					<input type="text" name="luser" required>
+					<label for="">Username</label>
+					<i class="fa fa-solid fa-user fa-xs"></i>
+				</div>
+				<div class="input-box animation" style="--d:2">
+					<input type="password" name="lpass" id="password" required>
+					<label for="">Password</label>
+					<i class="fa fa-solid fa-eye-slash" id="reveal"></i>
+				</div>
+				<div class="regi-link animation " style="--d:0">
+					<p id="forgetbutton" class="animation" style=" transform: translateX(40%);--d:2"><a href="#" class="forget_password">forget password</a></p>
+				</div>
+				<div class="input-box animation " style="--d:3">
+					<button class="btn" type="submit">Login</button>
+				</div>
+				<!-- registration link  and forget password -->
+				<div class="regi-link animation " style="--d:0">
+					<p class="animation" style="--d:1">Don't have an account ? <a href="#" class="SignUpLink">register</a></p>
+					<p class="animation" style="--d:1">Login as <a href="../ " class="SignUpLink">Guest</a></p>
+					
+				</div>
+				
+
+				<div class="info-content Login animation">
+					<h2>WELCOME BACK!</h2>
+					<P>LETS MAKE SOME MONEY COME FAST AND SPARS YOUR STOCKS </P>
+				</div>
+
+
+
+
+
+				
+			</form>
+			
+		</div>
+		
+		<!-- registration form -->
+		<div class="form-box Register">
+			<h2 class="animation" style="--li:17"> Register </h2>
+			<form action="/signup/" method="post">
+				<div class="input-box animation" style="--li:18" >
+					<input type="text" name="suser" required>
+					<label for="">Username</label>
+					<i class="fa fa-solid fa-user fa-xs"></i>
+				</div>
+				<div class="input-box animation" style="--li:18" >
+					<input type="text" name="semail" required>
+					<label for="">Email</label>
+					<i class="fa fa-solid fa-envelope"></i>
+				</div>
+				<div class="input-box animation" style="--li:19">
+					<input type="password" name="spass" id="password2" required>
+					<label for="">Password</label>
+					<i class="fa fa-solid fa-eye-slash" id="reveal2"></i>
+				</div>
+				
+				<div class="input-box animation" style="--li:20">
+					<button class="btn" type="submit">Register</button>
+				</div>
+				<!-- registration link  and forget password -->
+				<div class="regi-link animation" style="--li:21" >
+					<p style="transform: translateX(0px); --li:21" class="animation">Already have an account <a href="#" class="SignInLink">Login</a></p>
+
+				</div>
+				</div>
+
+				<div class="info-content Register">
+					<h2 class="animation" style=" transform: translateX(-33%);">WELCOME!</h2>
+					<P class="animation" style="transform: translateX(-33%);" >i guess you<br>are  new to spars lets <br>spars you stock<br> journey </P>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+</div>
+
+
+			<!-- otp form -->
+		<div class="otp" id="otp" >
+
+				<div class="ocontainer1">
+  <div class="ocontainer">
+  	<div class="back" style="transform: translateX(55%);">
+  		<div class="back2" style="transform: translateY(-300%);">
+  			<div></div>
+  	<p><a id="loginbut" href="#">X</a></p>
+  </div>
+  </div>
+    
+    <h3>FORGET PASSWORD</h3>
+      <form method="post" action="/otpe/">
+        <p>ENTER USERNAME</p>
+        
+        <input style="width: 160;
+      height: 25px;
+      margin: 8px 3px;
+      font-size: 18px;
+      outline: none;
+      border: 1px solid white;
+      border-radius: 5px;
+      text-align: center;
+      color: darkred;
+      background: transparent;" type="text" name="puser"><br>
+
+      <p>ENTER EMAIL</p>
+        
+        <input style="width: 160;
+      height: 25px;
+      margin: 8px 3px;
+      font-size: 18px;
+      outline: none;
+      border: 1px solid white;
+      border-radius: 5px;
+      text-align: center;
+      color: darkred;
+      background: transparent;" type="text" name="pmail"><br>
+        
+        <button style="width: 80px;
+      font-weight: 600;
+      border-radius: 20px;
+      border: 2px solid blue;
+      color: blue;
+      padding: 5px;
+      cursor: pointer;
+      background: transparent;
+      transition: 0.4s ease-in;
+      margin-top: 10px;
+      " type="submit"> SEND OTP</button>
+      </form>
+      
+  		</div></div></div>
+	
+
+	<script src="{% static 'js/log.js' %}"></script>
+	<script src="{% static 'js/main.js' %}"></script>
+	<script type="text/javascript">
+		window.onload = function () {
+        const otpDiv = document.getElementById('otp');
+        otpDiv.style.display = 'none';
+
+    };
+
+    function forget() {
+        const otpDiv = document.getElementById('otp');
+        const loginDiv = document.getElementById('logpage');
+        otpDiv.style.display = 'block';
+        loginDiv.style.display = 'none';
+
+    }
+
+    function logine() {
+        const otpDiv = document.getElementById('otp');
+        const loginDiv = document.getElementById('logpage');
+        otpDiv.style.display = 'none';
+        loginDiv.style.display = 'block';
+
+    }
+
+    document.getElementById('forgetbutton').onclick = forget;
+
+    document.getElementById('loginbut').onclick = logine;
+
+
+	</script>
+
+</body>
+</html>

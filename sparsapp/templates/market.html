@@ -1,0 +1,757 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Stock Market Prediction</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'image/dollar_icon.png' %}">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet"> 
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css' %}" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center color-blue" >
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-secondary navbar-dark">
+                <a href="#" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"><p style="color: blue;"><i class="fa fa-solid fa-dollar-sign"></i>SPARS</p></h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <div class="position-relative">
+                        {% if user.profile.profile_image %}
+                        <img class="rounded-circle" src="{{  user.profile.profile_image.url }}" alt="" style="width: 40px; height: 40px;">
+                        {% else %}
+                        <img class="rounded-circle" src="{% static 'image/user.png' %}" alt="" style="width: 40px; height: 40px;">
+                        {% endif %}
+
+
+                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0">Welcome</h6>
+                        <span>{{user}}</span>
+                    </div>
+                </div>
+                <div class="navbar-nav w-100">
+                    <a href="../../../" class="nav-item nav-link "><i class="fa fa-home me-2"></i>Home</a>
+                    <a href="/search" class="nav-item nav-link"><i class="fa fa-search me-2"></i>Predict</a>
+                    <a href="/market" class="nav-item nav-link active"><i class="fa fa-solid fa-dollar-sign me-2"></i>Market</a>
+                    <a href="/ticker" class="nav-item nav-link"><i class="fa fa-list-alt me-2"></i>Ticker info</a>
+                
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-solid fa-dollar-sign" style="color: blue;"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars" style="color: blue;"></i>
+                </a>
+                <form class="d-none d-md-flex ms-4">
+                    <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+                </form>
+                <div class="navbar-nav align-items-center ms-auto">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            {% if user.profile.profile_image %}
+                            <img class="rounded-circle me-lg-2" src="{{  user.profile.profile_image.url }}" alt="" style="width: 40px; height: 40px;">
+                            {% else %}
+                            <img class="rounded-circle me-lg-2" src="{% static 'image/user.png' %}" alt="" style="width: 40px; height: 40px;">
+                            {% endif %}
+                            <span class="d-none d-lg-inline-flex">{{user}}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                            
+                            {% if not user.is_authenticated %}
+                            <a href="/login/" class="dropdown-item">login</a>
+                            {% endif %}
+
+                            {% if user.is_authenticated %}
+                            <a href="/profile/" class="dropdown-item">profile</a>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                            <a href="/loggedout" class="dropdown-item">logout</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+
+
+
+            
+            <!-- Sales Chart End -->
+
+
+            <!-- Recent Sales Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-secondary text-center rounded p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0"><h1>SPARS Market</h1>
+    <select id="stockSelector" onchange="updateStocks()">
+        <option value="select" selected >select</option>
+        <option value="top" >Top 10 Stocks</option>
+        <option value="bottom">Bottom 10 Stocks</option>
+    </select></h6>
+    <select id="stockSelector2" onchange="updateStocks()">
+        <option value="select" selected >select</option>
+        <option value="Tech" >Technology</option>
+        <option value="financial">Financial service</option>
+        <option value="health">Health Care</option>
+        <option value="communication">Communication services</option>
+
+    </select></h6>
+                        <a href="https://finance.yahoo.com/trending-tickers" style="color: blue;">Show All</a>
+                    </div>
+                    <div id="all_stocks">
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if tot_stocks %}
+                                {% for i in tot_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                    <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    {% if user.is_authenticated %}
+                                    <td><button type="submit">buy</td>
+                                        {% endif %}
+                                </form>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div id="top_stocks">
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if top_stocks %}
+                                {% for i in top_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                     <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    {% if user.is_authenticated %}
+                                    <td><button type="submit">buy</td>
+                                        {% endif %}
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div id="bottomstocks">
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bot_stocks %}
+                                {% for i in bot_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                     <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    {% if user.is_authenticated %}
+                                    <td><button type="submit">buy</td>
+                                        {% endif %}
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div id="techtopstocks">
+                        
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if etop_stocks %}
+                                {% for i in etop_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                     <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    {% if user.is_authenticated %}
+                                    <td><button type="submit">buy</td>
+                                        {% endif %}
+                                
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div id="techbottomstocks">
+                        
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bebot_stocks %}
+                                {% for i in bebot_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                 <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    {% if user.is_authenticated %}
+                                    <td><button type="submit">buy</td>
+                                        {% endif %}
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                        
+                    </div>
+
+                    <!-- HEALTH SECTOR -->
+                    <div id="Healthtopstocks">
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if Htop_stocks %}
+                                {% for i in Htop_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                 <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    <td><button type="submit">buy</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+
+                    <div id="Healthbottomstocks">
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bHbot_stocks %}
+                                {% for i in bHbot_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                 <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    <td><button type="submit">buy</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <!-- FINANCIAL SERVICES STOCKS -->
+                    <div id="Financialtopstocks">
+                        <!-- top 10 financial stocks -->
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if Ftop_stocks %}
+                                {% for i in Ftop_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                 <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    <td><button type="submit">buy</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div id="Financialbottomstocks">
+                        <!-- BOTTOM - 10 - STOCKS -->
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bFbot_stocks %}
+                                {% for i in bFbot_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                     <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    <td><button type="submit">buy</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <!-- COMMUNICATION SERVICE STOCKS--->
+                    <div id="Communicationtopstocks">
+                        <!-- communication top 10 -->
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if Ctop_stocks %}
+                                {% for i in Ctop_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                      <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    <td><button type="submit">buy</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    </div>
+                    <div id="Communicationbottomstocks">
+                        <!-- COMMUNCICATION BOTTOM 10 STOCKS -->
+                        <div class="table-responsive">
+                        <table class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white">
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">company name</th>
+                                    <th scope="col">price</th>
+                                    <th scope="col">change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if bCbot_stocks %}
+                                {% for i in bCbot_stocks %}
+                                <tr>
+                                    <td>{{i.Ticker}}</td>
+                                    <td>{{i.company_name}}</td>
+                                    <td>{{i.Close}}</td>
+                                    <td>{{i.change}}</td>
+                                     <form method="post" action="/pay/">
+                                    <input type="hidden" name="stick" value="{{i.Ticker}}">
+                                    <input type="hidden" name="scom" value="{{i.company_name}}">
+                                    <input type="hidden" name="spri" value="{{i.Close}}">
+                                    <td><button type="submit">buy</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- Recent Sales End -->
+
+
+
+            <!-- Footer Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-secondary rounded-top p-4">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 text-center text-sm-start">
+                            &copy; <a style="color: blue;" href="#">Saksham Singh</a>, All Right Reserved. 
+                        </div>
+                        <div class="col-12 col-sm-6 text-center text-sm-end">
+                            Designed By <a style="color: blue;" href="#">Saksham singh</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer End -->
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" style="background-color: blue;"><i style="color: white;" class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'lib/tempusdominus/js/moment.min.js' %}"></script>
+    <script src="{% static 'lib/tempusdominus/js/moment-timezone.min.js' %}"></script>
+    <script src="{% static 'lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+
+    <script>
+        window.onload = function () {
+        const totStocksDiv = document.getElementById('all_stocks');
+        const topStocksDiv = document.getElementById('top_stocks');
+        const bottomStocksDiv = document.getElementById('bottomstocks');
+        const techtopStocksDiv = document.getElementById('techtopstocks');
+        const techbottomStocksDiv = document.getElementById('techbottomstocks');
+        const healthtopStocksDiv = document.getElementById('Healthtopstocks');
+        const healthbottomStocksDiv = document.getElementById('Healthbottomstocks');
+        const financialtopStocksDiv = document.getElementById('Financialtopstocks');
+        const financialbottomStocksDiv = document.getElementById('Financialbottomstocks');
+        const communicationtopStocksDiv = document.getElementById('Communicationtopstocks');
+        const communicationbottomStocksDiv = document.getElementById('Communicationbottomstocks');
+
+        totStocksDiv.style.display = 'block';
+        topStocksDiv.style.display = 'none';
+        bottomStocksDiv.style.display = 'none';
+        techtopStocksDiv.style.display = 'none';
+        techbottomStocksDiv.style.display = 'none';
+        healthtopStocksDiv.style.display = 'none';
+        healthbottomStocksDiv.style.display = 'none';
+        financialtopStocksDiv.style.display = 'none';
+        financialbottomStocksDiv.style.display = 'none';
+        communicationtopStocksDiv.style.display = 'none';
+        communicationbottomStocksDiv.style.display = 'none';
+    };
+        function updateStocks() {
+            const selectedValue = document.getElementById('stockSelector').value;
+            const totStocksDiv = document.getElementById('all_stocks');
+            const topStocksDiv = document.getElementById('top_stocks');
+            const bottomStocksDiv = document.getElementById('bottomstocks');
+            const selectedValue2 = document.getElementById('stockSelector2').value;
+            const techtopStocksDiv = document.getElementById('techtopstocks');
+            const techbottomStocksDiv = document.getElementById('techbottomstocks');
+            const healthtopStocksDiv = document.getElementById('Healthtopstocks');
+            const healthbottomStocksDiv = document.getElementById('Healthbottomstocks');
+            const financialtopStocksDiv = document.getElementById('Financialtopstocks');
+            const financialbottomStocksDiv = document.getElementById('Financialbottomstocks');
+            const communicationtopStocksDiv = document.getElementById('Communicationtopstocks');
+            const communicationbottomStocksDiv = document.getElementById('Communicationbottomstocks');
+
+            if (selectedValue === 'select' && selectedValue2 === 'select') {
+            totStocksDiv.style.display = 'block';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'top' && selectedValue2 === 'select'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'block';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'top' && selectedValue2 === 'Tech'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'block';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'bottom' && selectedValue2 === 'Tech'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'block';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            }else if (selectedValue === 'top' && selectedValue2 === 'health'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'block';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'bottom' && selectedValue2 === 'health'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'block';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'top' && selectedValue2 === 'financial'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'block';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'bottom' && selectedValue2 === 'financial'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'block';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'top' && selectedValue2 === 'communication'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'block';
+            communicationbottomStocksDiv.style.display = 'none';
+            } else if (selectedValue === 'bottom' && selectedValue2 === 'communication'){
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'none';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'block';
+            } else {
+            totStocksDiv.style.display = 'none';
+            topStocksDiv.style.display = 'none';
+            bottomStocksDiv.style.display = 'block';
+            techtopStocksDiv.style.display = 'none';
+            techbottomStocksDiv.style.display = 'none';
+            financialtopStocksDiv.style.display = 'none';
+            financialbottomStocksDiv.style.display = 'none';
+            healthtopStocksDiv.style.display = 'none';
+            healthbottomStocksDiv.style.display = 'none';
+            communicationtopStocksDiv.style.display = 'none';
+            communicationbottomStocksDiv.style.display = 'none';
+            }
+        }
+    </script>
+    <script>
+    const buyButtons = document.querySelectorAll('.buybtn');
+
+    buyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const ticker = button.dataset.ticker;
+
+            // Send the ticker to your backend using AJAX
+            fetch('/pay/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}' 
+                },
+                body: JSON.stringify({ ticker: ticker })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Process the response from your backend
+                console.log("Data received:", data); 
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
