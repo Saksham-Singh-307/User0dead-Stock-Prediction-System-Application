@@ -87,7 +87,7 @@ THE BASIC DESIGN IS TAKEN FROM https://github.com/Kumar-laxmi
 ## Project Installation:
 **STEP 1:** Clone the repository from GitHub.
 ```bash
-  git clone https://github.com/Kumar-laxmi/Stock-Prediction-System-Application.git
+  git clone https://github.com/Saksham-Singh-307/User0dead-Stock-Prediction-System-Application
 ```
 
 **STEP 2:** Change the directory to the repository.
@@ -140,6 +140,28 @@ THE BASIC DESIGN IS TAKEN FROM https://github.com/Kumar-laxmi
   python3 manage.py runserver
 ```
 
+
+
+here are the screenshot of app!
+
+login
+![image alt](https://github.com/Saksham-Singh-307/User0dead-Stock-Prediction-System-Application/blob/main/spars/Screenshot%202025-03-10%20222336.png?raw=true)
+
+
+home page
+![image alt](https://github.com/Saksham-Singh-307/User0dead-Stock-Prediction-System-Application/blob/main/spars/Screenshot%202025-03-10%20222234.png?raw=true)
+
+
+prediction page
+![image alt](https://github.com/Saksham-Singh-307/User0dead-Stock-Prediction-System-Application/blob/main/spars/Screenshot%202024-11-15%20143411.png?raw=true)
+
+
+market page
+![image alt](https://github.com/Saksham-Singh-307/User0dead-Stock-Prediction-System-Application/blob/main/spars/Screenshot%202025-03-10%20222321.png?raw=true)
+
+
+payment
+![image alt](https://github.com/Saksham-Singh-307/User0dead-Stock-Prediction-System-Application/blob/main/spars/Screenshot%202025-03-10%20222305.png?raw=true)
 
 
 
